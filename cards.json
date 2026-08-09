@@ -274,13 +274,13 @@
       "id": "super_troupes-super-gobelin",
       "name": "Super gobelin",
       "category": "super_troupes",
-      "imageUrl": "https://coc.guide/static/imgs/troop/elitegoblin.png"
+      "imageUrl": "https://coc.guide/static/imgs/troop/elitegiant.png"
     },
     {
       "id": "super_troupes-super-geant",
       "name": "Super géant",
       "category": "super_troupes",
-      "imageUrl": "https://coc.guide/static/imgs/troop/elitegiant.png"
+      "imageUrl": "https://coc.guide/static/imgs/troop/elitegoblin.png"
     },
     {
       "id": "super_troupes-super-sapeur",
