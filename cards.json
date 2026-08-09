@@ -1,0 +1,364 @@
+{
+  "cards": [
+    {
+      "id": "elixir-barbare",
+      "name": "Barbare",
+      "category": "elixir",
+      "imageUrl": "https://coc.guide/static/imgs/troop/barbarian.png"
+    },
+    {
+      "id": "elixir-archere",
+      "name": "Archère",
+      "category": "elixir",
+      "imageUrl": "https://coc.guide/static/imgs/troop/archer.png"
+    },
+    {
+      "id": "elixir-geant",
+      "name": "Géant",
+      "category": "elixir",
+      "imageUrl": "https://coc.guide/static/imgs/troop/giant.png"
+    },
+    {
+      "id": "elixir-gobelin",
+      "name": "Gobelin",
+      "category": "elixir",
+      "imageUrl": "https://coc.guide/static/imgs/troop/goblin.png"
+    },
+    {
+      "id": "elixir-sapeur",
+      "name": "Sapeur",
+      "category": "elixir",
+      "imageUrl": "https://coc.guide/static/imgs/troop/wall-breaker.png"
+    },
+    {
+      "id": "elixir-ballon",
+      "name": "Ballon",
+      "category": "elixir",
+      "imageUrl": "https://coc.guide/static/imgs/troop/balloon.png"
+    },
+    {
+      "id": "elixir-sorcier",
+      "name": "Sorcier",
+      "category": "elixir",
+      "imageUrl": "https://coc.guide/static/imgs/troop/wizard.png"
+    },
+    {
+      "id": "elixir-guerisseuse",
+      "name": "Guérisseuse",
+      "category": "elixir",
+      "imageUrl": "https://coc.guide/static/imgs/troop/healer.png"
+    },
+    {
+      "id": "elixir-dragon",
+      "name": "Dragon",
+      "category": "elixir",
+      "imageUrl": "https://coc.guide/static/imgs/troop/dragon.png"
+    },
+    {
+      "id": "elixir-p-e-k-k-a",
+      "name": "P.E.K.K.A",
+      "category": "elixir",
+      "imageUrl": "https://coc.guide/static/imgs/troop/pekka.png"
+    },
+    {
+      "id": "elixir-bebe-dragon",
+      "name": "Bébé dragon",
+      "category": "elixir",
+      "imageUrl": "https://coc.guide/static/imgs/troop/babydragon.png"
+    },
+    {
+      "id": "elixir-mineur",
+      "name": "Mineur",
+      "category": "elixir",
+      "imageUrl": "https://coc.guide/static/imgs/troop/miner.png"
+    },
+    {
+      "id": "elixir-electro-dragon",
+      "name": "Electro-dragon",
+      "category": "elixir",
+      "imageUrl": "https://coc.guide/static/imgs/troop/electro-dragon.png"
+    },
+    {
+      "id": "elixir-yeti",
+      "name": "Yéti",
+      "category": "elixir",
+      "imageUrl": "https://coc.guide/static/imgs/troop/yeti.png"
+    },
+    {
+      "id": "elixir-chevaucheur-de-dragon",
+      "name": "Chevaucheur de dragon",
+      "category": "elixir",
+      "imageUrl": "https://coc.guide/static/imgs/troop/dragon-rider.png"
+    },
+    {
+      "id": "elixir-electro-titanide",
+      "name": "Electro-titanide",
+      "category": "elixir",
+      "imageUrl": "https://coc.guide/static/imgs/troop/electro-titan.png"
+    },
+    {
+      "id": "elixir-cavaliere-sylvestre",
+      "name": "Cavalière Sylvestre",
+      "category": "elixir",
+      "imageUrl": "https://coc.guide/static/imgs/troop/root-rider.png"
+    },
+    {
+      "id": "elixir-cyclope",
+      "name": "Cyclope",
+      "category": "elixir",
+      "imageUrl": "https://coc.guide/static/imgs/troop/thrower.png"
+    },
+    {
+      "id": "elixir-golem-meteorique",
+      "name": "Golem météorique",
+      "category": "elixir",
+      "imageUrl": null
+    },
+    {
+      "id": "elixir_noir-gargouille",
+      "name": "Gargouille",
+      "category": "elixir_noir",
+      "imageUrl": "https://coc.guide/static/imgs/troop/gargoyle.png"
+    },
+    {
+      "id": "elixir_noir-chevaucheur-de-cochon",
+      "name": "Chevaucheur de cochon",
+      "category": "elixir_noir",
+      "imageUrl": "https://coc.guide/static/imgs/troop/boar-rider.png"
+    },
+    {
+      "id": "elixir_noir-valkyrie",
+      "name": "Valkyrie",
+      "category": "elixir_noir",
+      "imageUrl": "https://coc.guide/static/imgs/troop/warrior-girl.png"
+    },
+    {
+      "id": "elixir_noir-golem",
+      "name": "Golem",
+      "category": "elixir_noir",
+      "imageUrl": "https://coc.guide/static/imgs/troop/golem.png"
+    },
+    {
+      "id": "elixir_noir-sorciere",
+      "name": "Sorcière",
+      "category": "elixir_noir",
+      "imageUrl": "https://coc.guide/static/imgs/troop/warlock.png"
+    },
+    {
+      "id": "elixir_noir-molosse-de-lave",
+      "name": "Molosse de lave",
+      "category": "elixir_noir",
+      "imageUrl": "https://coc.guide/static/imgs/troop/airdefenceseeker.png"
+    },
+    {
+      "id": "elixir_noir-bouliste",
+      "name": "Bouliste",
+      "category": "elixir_noir",
+      "imageUrl": "https://coc.guide/static/imgs/troop/bowler.png"
+    },
+    {
+      "id": "elixir_noir-golem-de-glace",
+      "name": "Golem de glace",
+      "category": "elixir_noir",
+      "imageUrl": "https://coc.guide/static/imgs/troop/ice-golem.png"
+    },
+    {
+      "id": "elixir_noir-chasseuse-de-tete",
+      "name": "Chasseuse de tête",
+      "category": "elixir_noir",
+      "imageUrl": "https://coc.guide/static/imgs/troop/headhunter.png"
+    },
+    {
+      "id": "elixir_noir-apprentie-gardien",
+      "name": "Apprentie gardien",
+      "category": "elixir_noir",
+      "imageUrl": "https://coc.guide/static/imgs/troop/apprentice-warden.png"
+    },
+    {
+      "id": "elixir_noir-druide",
+      "name": "Druide",
+      "category": "elixir_noir",
+      "imageUrl": "https://coc.guide/static/imgs/troop/druid_healer.png"
+    },
+    {
+      "id": "elixir_noir-fournaise",
+      "name": "Fournaise",
+      "category": "elixir_noir",
+      "imageUrl": null
+    },
+    {
+      "id": "elixir_noir-sorciere-des-ruines",
+      "name": "Sorcière des ruines",
+      "category": "elixir_noir",
+      "imageUrl": null
+    },
+    {
+      "id": "base_ouvriers-barbare-enrage",
+      "name": "Barbare enragé",
+      "category": "base_ouvriers",
+      "imageUrl": "https://coc.guide/static/imgs/troop/barbarian2.png"
+    },
+    {
+      "id": "base_ouvriers-archere-furtive",
+      "name": "Archère furtive",
+      "category": "base_ouvriers",
+      "imageUrl": "https://coc.guide/static/imgs/troop/archer2.png"
+    },
+    {
+      "id": "base_ouvriers-geant-boxeur",
+      "name": "Géant boxeur",
+      "category": "base_ouvriers",
+      "imageUrl": "https://coc.guide/static/imgs/troop/giant2.png"
+    },
+    {
+      "id": "base_ouvriers-beta-gargouille",
+      "name": "Bêta-gargouille",
+      "category": "base_ouvriers",
+      "imageUrl": "https://coc.guide/static/imgs/troop/gargoyle2.png"
+    },
+    {
+      "id": "base_ouvriers-bombardier",
+      "name": "Bombardier",
+      "category": "base_ouvriers",
+      "imageUrl": "https://coc.guide/static/imgs/troop/bomber2.png"
+    },
+    {
+      "id": "base_ouvriers-bebe-dragon-base-des-ouvriers",
+      "name": "Bébé dragon (Base des ouvriers)",
+      "category": "base_ouvriers",
+      "imageUrl": "https://coc.guide/static/imgs/troop/babydragon2.png"
+    },
+    {
+      "id": "base_ouvriers-charrette-a-canon",
+      "name": "Charrette à canon",
+      "category": "base_ouvriers",
+      "imageUrl": "https://coc.guide/static/imgs/troop/moving-cannon.png"
+    },
+    {
+      "id": "base_ouvriers-sorciere-de-la-nuit",
+      "name": "Sorcière de la nuit",
+      "category": "base_ouvriers",
+      "imageUrl": "https://coc.guide/static/imgs/troop/dark-witch.png"
+    },
+    {
+      "id": "base_ouvriers-ballon-livreur",
+      "name": "Ballon livreur",
+      "category": "base_ouvriers",
+      "imageUrl": "https://coc.guide/static/imgs/troop/balloon2.png"
+    },
+    {
+      "id": "base_ouvriers-giga-p-e-k-k-a",
+      "name": "Giga-P.E.K.K.A",
+      "category": "base_ouvriers",
+      "imageUrl": "https://coc.guide/static/imgs/troop/pekka2.png"
+    },
+    {
+      "id": "base_ouvriers-chevaucheur-du-ciel",
+      "name": "Chevaucheur du ciel",
+      "category": "base_ouvriers",
+      "imageUrl": "https://coc.guide/static/imgs/troop/hog-glider.png"
+    },
+    {
+      "id": "super_troupes-super-barbare",
+      "name": "Super barbare",
+      "category": "super_troupes",
+      "imageUrl": "https://coc.guide/static/imgs/troop/elitebarbarian.png"
+    },
+    {
+      "id": "super_troupes-super-archere",
+      "name": "Super archère",
+      "category": "super_troupes",
+      "imageUrl": "https://coc.guide/static/imgs/troop/elitearcher.png"
+    },
+    {
+      "id": "super_troupes-super-gobelin",
+      "name": "Super gobelin",
+      "category": "super_troupes",
+      "imageUrl": "https://coc.guide/static/imgs/troop/elitegoblin.png"
+    },
+    {
+      "id": "super_troupes-super-geant",
+      "name": "Super géant",
+      "category": "super_troupes",
+      "imageUrl": "https://coc.guide/static/imgs/troop/elitegiant.png"
+    },
+    {
+      "id": "super_troupes-super-sapeur",
+      "name": "Super sapeur",
+      "category": "super_troupes",
+      "imageUrl": "https://coc.guide/static/imgs/troop/elitewallbreaker.png"
+    },
+    {
+      "id": "super_troupes-super-ballon",
+      "name": "Super ballon",
+      "category": "super_troupes",
+      "imageUrl": null
+    },
+    {
+      "id": "super_troupes-super-sorcier",
+      "name": "Super sorcier",
+      "category": "super_troupes",
+      "imageUrl": "https://coc.guide/static/imgs/troop/super-wizard.png"
+    },
+    {
+      "id": "super_troupes-super-dragon",
+      "name": "Super dragon",
+      "category": "super_troupes",
+      "imageUrl": "https://coc.guide/static/imgs/troop/super-dragon.png"
+    },
+    {
+      "id": "super_troupes-dragon-de-l-enfer",
+      "name": "Dragon de l'enfer",
+      "category": "super_troupes",
+      "imageUrl": "https://coc.guide/static/imgs/troop/infernodragon.png"
+    },
+    {
+      "id": "super_troupes-super-mineur",
+      "name": "Super mineur",
+      "category": "super_troupes",
+      "imageUrl": "https://coc.guide/static/imgs/troop/super-miner.png"
+    },
+    {
+      "id": "super_troupes-super-yeti",
+      "name": "Super yéti",
+      "category": "super_troupes",
+      "imageUrl": null
+    },
+    {
+      "id": "super_troupes-super-gargouille",
+      "name": "Super gargouille",
+      "category": "super_troupes",
+      "imageUrl": "https://coc.guide/static/imgs/troop/super-minion.png"
+    },
+    {
+      "id": "super_troupes-super-chevaucheur",
+      "name": "Super chevaucheur",
+      "category": "super_troupes",
+      "imageUrl": "https://coc.guide/static/imgs/troop/super-hog-rider.png"
+    },
+    {
+      "id": "super_troupes-super-valkyrie",
+      "name": "Super Valkyrie",
+      "category": "super_troupes",
+      "imageUrl": "https://coc.guide/static/imgs/troop/elitevalkyrie.png"
+    },
+    {
+      "id": "super_troupes-super-sorciere",
+      "name": "Super sorcière",
+      "category": "super_troupes",
+      "imageUrl": "https://coc.guide/static/imgs/troop/head-witch.png"
+    },
+    {
+      "id": "super_troupes-molosse-de-glace",
+      "name": "Molosse de glace",
+      "category": "super_troupes",
+      "imageUrl": "https://coc.guide/static/imgs/troop/ice-hound.png"
+    },
+    {
+      "id": "super_troupes-super-bouliste",
+      "name": "Super bouliste",
+      "category": "super_troupes",
+      "imageUrl": "https://coc.guide/static/imgs/troop/super-bowler.png"
+    }
+  ]
+}

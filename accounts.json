@@ -1,0 +1,16 @@
+{
+  "accounts": [
+    { "id": "goblin-king", "name": "GoblinKing", "owner": "Alex", "priority": 1 },
+    { "id": "pekka-power", "name": "PekkaPower", "owner": "Alex", "priority": 2 },
+    { "id": "hog-rush", "name": "Hog Rush", "owner": "Alex", "priority": 3 },
+    { "id": "mini-alex", "name": "Mini_Alex", "owner": "Alex", "priority": 4 },
+
+    { "id": "valkyrie-x", "name": "Valkyrie X", "owner": "Sam", "priority": 1 },
+    { "id": "baby-drake", "name": "Baby_Drake", "owner": "Sam", "priority": 2 },
+    { "id": "wall-breaker", "name": "WallBreaker", "owner": "Sam", "priority": 3 },
+    { "id": "bowler42", "name": "Bowler42", "owner": "Sam", "priority": 4 },
+    { "id": "night-witch", "name": "NightWitch", "owner": "Sam", "priority": 5 },
+
+    { "id": "golem-noa", "name": "GolemNoa", "owner": "Noa", "priority": 1 }
+  ]
+}
