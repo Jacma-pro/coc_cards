@@ -106,7 +106,12 @@ export default function App() {
         {tab === 'album' ? (
           <AlbumView data={data} category={category} accountId={selected.id} />
         ) : (
-          <TradesView data={data} category={category} />
+          <TradesView
+            data={data}
+            category={category}
+            accountId={selected.id}
+            accountName={selected.name}
+          />
         )}
       </main>
 

@@ -651,6 +651,16 @@ h2 {
   font-size: 0.98rem;
   font-weight: 700;
 }
+.tradegroup__main {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--gold);
+  border: 1px solid color-mix(in srgb, var(--gold) 55%, transparent);
+  border-radius: 999px;
+  padding: 0.1rem 0.45rem;
+}
 .tradegroup__owner {
   font-size: 0.75rem;
 }
@@ -665,51 +675,89 @@ h2 {
   padding: 0.15rem 0.5rem;
   border-radius: 999px;
 }
-.tradegroup__list {
-  list-style: none;
-  margin: 0;
-  padding: 0.35rem 0.5rem 0.5rem;
+.trades__intro {
+  font-size: 0.85rem;
+  margin: 0 0 0.8rem;
+  strong {
+    color: var(--primary-2);
+  }
+}
+
+.swaps {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.4rem;
+  padding: 0.45rem 0.5rem 0.55rem;
 }
-.traderow {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.5rem 0.6rem;
+.swap {
   border-radius: 10px;
   border-left: 3px solid var(--cat-color);
   background: var(--bg3);
-  font-size: 0.88rem;
+  padding: 0.55rem 0.65rem;
 }
-.traderow__card {
-  font-weight: 600;
-}
-.traderow__donors {
-  margin-left: auto;
-  text-align: right;
-  color: var(--muted);
-  font-size: 0.85rem;
-}
-.donor {
-  color: var(--text);
-  white-space: nowrap;
-}
-.donor__sep {
-  display: inline-block;
-  width: 4px;
-  height: 4px;
-  margin: 0 0.4rem;
-  border-radius: 50%;
-  background: var(--muted);
-  vertical-align: middle;
-}
-.donor__spare {
-  margin-left: 0.2rem;
-  color: var(--gold);
+.swap__cat {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--cat-color);
+  margin-bottom: 0.45rem;
+}
+.swap__catdot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--cat-color);
+  box-shadow: 0 0 6px var(--cat-color);
+}
+.swap__cols {
+  display: flex;
+  align-items: stretch;
+  gap: 0.5rem;
+}
+.swap__col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.4rem 0.55rem;
+  border-radius: 8px;
+  background: var(--bg2);
+}
+.swap__col--give {
+  border: 1px solid rgba(244, 63, 94, 0.35);
+}
+.swap__col--get {
+  border: 1px solid rgba(74, 222, 128, 0.35);
+}
+.swap__label {
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--muted);
+}
+.swap__col--give .swap__label {
+  color: var(--cta);
+}
+.swap__col--get .swap__label {
+  color: var(--good);
+}
+.swap__cards {
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.25;
+  word-break: break-word;
+}
+.swap__arrow {
+  align-self: center;
+  color: var(--primary-2);
+  font-size: 1.1rem;
+  flex: 0 0 auto;
 }
 
 // ── Trades: matrix ─────────────────────────────────────────────────
@@ -754,6 +802,11 @@ h2 {
   color: var(--muted);
   font-weight: 600;
   background: var(--bg2);
+}
+.matrix__colhead.is-me,
+.matrix__rowhead.is-me {
+  color: var(--primary-2);
+  background: color-mix(in srgb, var(--primary) 22%, var(--bg2));
 }
 .matrix__rowhead {
   color: var(--text);

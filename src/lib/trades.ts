@@ -1,5 +1,6 @@
-import type { Account, Card, OwnershipMap } from './types';
+import type { Account, Card, Category, OwnershipMap } from './types';
 import { ownKey } from './types';
+import { CATEGORY_ORDER } from './categories';
 
 export function quantityOf(own: OwnershipMap, accountId: string, cardId: string): number {
   return own[ownKey(accountId, cardId)] ?? 0;
@@ -10,90 +11,86 @@ export function spareCount(own: OwnershipMap, accountId: string, cardId: string)
   return Math.max(0, quantityOf(own, accountId, cardId) - 1);
 }
 
-export interface DonorOffer {
-  donor: Account;
-  spare: number;
+/** Une carte que je peux donner : j'en ai un doublon, l'autre ne l'a pas. */
+function canGive(own: OwnershipMap, from: string, to: string, cardId: string): boolean {
+  return spareCount(own, from, cardId) > 0 && quantityOf(own, to, cardId) === 0;
 }
 
-export interface TradeOpportunity {
-  card: Card;
-  receiver: Account;
-  donors: DonorOffer[];
+export interface CategorySwap {
+  category: Category;
+  give: Card[]; // cartes que le compte de référence peut donner au partenaire
+  get: Card[]; // cartes que le partenaire peut donner au compte de référence
 }
 
-/**
- * Compare deux comptes pour l'ordre de priorité : le compte principal (priority 1)
- * d'un même propriétaire passe avant ses comptes secondaires. On regroupe d'abord
- * par propriétaire (ordre alphabétique stable), puis priority croissante.
- */
-function byOwnerThenPriority(a: Account, b: Account): number {
-  if (a.owner !== b.owner) return a.owner.localeCompare(b.owner);
-  return a.priority - b.priority;
+export interface PartnerTrades {
+  partner: Account;
+  swaps: CategorySwap[];
+  /** nb de trocs 1-contre-1 réalisables (somme sur les catégories de min(give, get)). */
+  total: number;
 }
 
 /**
- * Pour chaque compte "receveur" et chaque carte qui lui manque (quantity 0),
- * liste les comptes "donneurs" qui possèdent un doublon de cette même carte.
- * La contrainte "même catégorie" est automatiquement respectée : on n'apparie
- * qu'une carte avec elle-même, donc la catégorie est identique par construction.
- *
- * Résultat trié : receveurs par (propriétaire, priorité), puis carte par catégorie/nom
- * (l'ordre d'entrée de `cards` est conservé), donneurs par nb de doublons puis priorité.
+ * Échanges réciproques (gagnant-gagnant) du point de vue de `accountId`.
+ * Pour chaque autre compte et chaque catégorie, on ne garde la catégorie que si
+ * les DEUX côtés ont quelque chose à donner (même catégorie obligatoire).
  */
-export function computeTrades(
+export function reciprocalTradesFor(
   cards: Card[],
   accounts: Account[],
   own: OwnershipMap,
-): TradeOpportunity[] {
-  const receivers = [...accounts].sort(byOwnerThenPriority);
-  const out: TradeOpportunity[] = [];
+  accountId: string,
+): PartnerTrades[] {
+  const me = accountId;
+  const result: PartnerTrades[] = [];
 
-  for (const receiver of receivers) {
-    for (const card of cards) {
-      if (quantityOf(own, receiver.id, card.id) > 0) continue; // déjà obtenue
+  for (const partner of accounts) {
+    if (partner.id === me) continue;
 
-      const donors: DonorOffer[] = [];
-      for (const donor of accounts) {
-        if (donor.id === receiver.id) continue;
-        const spare = spareCount(own, donor.id, card.id);
-        if (spare > 0) donors.push({ donor, spare });
-      }
-      if (donors.length === 0) continue;
+    const swaps: CategorySwap[] = [];
+    for (const cat of CATEGORY_ORDER) {
+      const catCards = cards.filter((c) => c.category === cat);
+      const give = catCards.filter((c) => canGive(own, me, partner.id, c.id));
+      const get = catCards.filter((c) => canGive(own, partner.id, me, c.id));
+      if (give.length > 0 && get.length > 0) swaps.push({ category: cat, give, get });
+    }
 
-      donors.sort((a, b) => {
-        if (b.spare !== a.spare) return b.spare - a.spare; // plus de doublons d'abord
-        return byOwnerThenPriority(a.donor, b.donor);
-      });
-
-      out.push({ card, receiver, donors });
+    if (swaps.length > 0) {
+      const total = swaps.reduce((s, x) => s + Math.min(x.give.length, x.get.length), 0);
+      result.push({ partner, swaps, total });
     }
   }
 
-  return out;
+  // Comptes principaux (P1) d'abord, puis par nombre d'échanges possibles.
+  result.sort((a, b) => a.partner.priority - b.partner.priority || b.total - a.total);
+  return result;
 }
 
 /**
- * Matrice donneur × receveur : nombre de cartes distinctes que `donor` peut
- * transmettre à `receiver` (donneur a un doublon, receveur ne l'a pas).
- * Clé : `${donorId}:${receiverId}` -> nombre de cartes.
+ * Matrice symétrique : nombre de trocs gagnant-gagnant possibles entre chaque paire
+ * de comptes. Clé `${aId}:${bId}` (renseignée dans les deux sens).
  */
-export function computeMatrix(
+export function reciprocalMatrix(
   cards: Card[],
   accounts: Account[],
   own: OwnershipMap,
 ): Record<string, number> {
-  const matrix: Record<string, number> = {};
-  for (const donor of accounts) {
-    for (const receiver of accounts) {
-      if (donor.id === receiver.id) continue;
-      let count = 0;
-      for (const card of cards) {
-        if (spareCount(own, donor.id, card.id) > 0 && quantityOf(own, receiver.id, card.id) === 0) {
-          count += 1;
-        }
+  const m: Record<string, number> = {};
+  for (let i = 0; i < accounts.length; i++) {
+    for (let j = i + 1; j < accounts.length; j++) {
+      const a = accounts[i];
+      const b = accounts[j];
+      let total = 0;
+      for (const cat of CATEGORY_ORDER) {
+        const catCards = cards.filter((c) => c.category === cat);
+        const give = catCards.filter((c) => canGive(own, a.id, b.id, c.id)).length;
+        const get = catCards.filter((c) => canGive(own, b.id, a.id, c.id)).length;
+        total += Math.min(give, get);
       }
-      if (count > 0) matrix[`${donor.id}:${receiver.id}`] = count;
+      if (total > 0) {
+        m[`${a.id}:${b.id}`] = total;
+        m[`${b.id}:${a.id}`] = total;
+      }
     }
   }
-  return matrix;
+  return m;
 }
