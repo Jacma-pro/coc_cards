@@ -71,3 +71,16 @@ drop policy if exists "delete player_cards" on player_cards;
 create policy "write player_cards"  on player_cards for insert with check (true);
 create policy "update player_cards" on player_cards for update using (true) with check (true);
 create policy "delete player_cards" on player_cards for delete using (true);
+
+-- ── Realtime ───────────────────────────────────────────────────────
+-- Diffuse les changements de player_cards à tous les clients connectés
+-- (synchro live entre appareils / comptes). Idempotent.
+do $$
+begin
+  if exists (select 1 from pg_publication where pubname = 'supabase_realtime') then
+    begin
+      alter publication supabase_realtime add table player_cards;
+    exception when duplicate_object then null;
+    end;
+  end if;
+end $$;

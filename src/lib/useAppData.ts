@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { fetchAccounts, fetchCards, fetchPlayerCards, setPlayerCard } from './api';
-import { isSupabaseConfigured } from './supabase';
-import type { Account, Card, OwnershipMap } from './types';
+import { isSupabaseConfigured, supabase } from './supabase';
+import type { Account, Card, OwnershipMap, PlayerCard } from './types';
 import { ownKey } from './types';
 
 export interface AppData {
@@ -50,6 +50,37 @@ export function useAppData(): AppData {
   useEffect(() => {
     void load();
   }, [load]);
+
+  // Synchro temps réel : applique les changements des autres appareils/comptes.
+  useEffect(() => {
+    if (!supabase) return;
+    const client = supabase;
+    const channel = client
+      .channel('player_cards-sync')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'player_cards' },
+        (payload) => {
+          setOwnership((prev) => {
+            const next = { ...prev };
+            if (payload.eventType === 'DELETE') {
+              const row = payload.old as Partial<PlayerCard>;
+              if (row.account_id && row.card_id) delete next[ownKey(row.account_id, row.card_id)];
+            } else {
+              const row = payload.new as PlayerCard;
+              if (row.quantity <= 0) delete next[ownKey(row.account_id, row.card_id)];
+              else next[ownKey(row.account_id, row.card_id)] = row.quantity;
+            }
+            return next;
+          });
+        },
+      )
+      .subscribe();
+
+    return () => {
+      void client.removeChannel(channel);
+    };
+  }, []);
 
   const setQuantity = useCallback(
     (accountId: string, cardId: string, quantity: number) => {
