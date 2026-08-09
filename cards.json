@@ -271,14 +271,14 @@
       "imageUrl": "https://coc.guide/static/imgs/troop/elitearcher.png"
     },
     {
-      "id": "super_troupes-super-gobelin",
-      "name": "Super gobelin",
+      "id": "super_troupes-super-geant",
+      "name": "Super géant",
       "category": "super_troupes",
       "imageUrl": "https://coc.guide/static/imgs/troop/elitegiant.png"
     },
     {
-      "id": "super_troupes-super-geant",
-      "name": "Super géant",
+      "id": "super_troupes-super-gobelin",
+      "name": "Gobelin furtif",
       "category": "super_troupes",
       "imageUrl": "https://coc.guide/static/imgs/troop/elitegoblin.png"
     },
