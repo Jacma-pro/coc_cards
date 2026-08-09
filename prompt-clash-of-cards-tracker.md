@@ -20,6 +20,7 @@ La priorité correspond à l'ordre donné ci-dessus (1 = compte principal de la 
 
 ## Données de référence (fournies, à importer telles quelles)
 
+
 Deux fichiers JSON sont fournis en pièce jointe :
 - `cards.json` : les 60 cartes (`id`, `name`, `category`, `imageUrl` — certains `imageUrl` sont `null`, à compléter plus tard, ne pas bloquer dessus)
 - `accounts.json` : les 10 comptes (`id`, `name`, `owner`, `priority`)
