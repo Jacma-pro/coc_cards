@@ -112,7 +112,7 @@
       "id": "elixir-golem-meteorique",
       "name": "Golem météorique",
       "category": "elixir",
-      "imageUrl": null
+      "imageUrl": "/cards/golem-meteorique.webp"
     },
     {
       "id": "elixir_noir-gargouille",
@@ -184,13 +184,13 @@
       "id": "elixir_noir-fournaise",
       "name": "Fournaise",
       "category": "elixir_noir",
-      "imageUrl": null
+      "imageUrl": "/cards/fournaise.webp"
     },
     {
       "id": "elixir_noir-sorciere-des-ruines",
       "name": "Sorcière des ruines",
       "category": "elixir_noir",
-      "imageUrl": null
+      "imageUrl": "/cards/sorciere-des-ruines.webp"
     },
     {
       "id": "base_ouvriers-barbare-enrage",
@@ -292,7 +292,7 @@
       "id": "super_troupes-super-ballon",
       "name": "Super ballon",
       "category": "super_troupes",
-      "imageUrl": null
+      "imageUrl": "https://coc.guide/static/imgs/troop/hastyballoon.png"
     },
     {
       "id": "super_troupes-super-sorcier",
@@ -322,7 +322,7 @@
       "id": "super_troupes-super-yeti",
       "name": "Super yéti",
       "category": "super_troupes",
-      "imageUrl": null
+      "imageUrl": "/cards/super-yeti.webp"
     },
     {
       "id": "super_troupes-super-gargouille",
