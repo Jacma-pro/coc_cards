@@ -747,17 +747,93 @@ h2 {
 .swap__col--get .swap__label {
   color: var(--good);
 }
-.swap__cards {
-  font-size: 0.85rem;
+.swap__opts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.swap__opt {
+  text-align: left;
+  font-size: 0.82rem;
   font-weight: 600;
-  line-height: 1.25;
+  line-height: 1.2;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  padding: 0.3rem 0.4rem;
+  transition: background 0.15s, border-color 0.15s;
   word-break: break-word;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  &.is-sel {
+    border-color: var(--cat-color);
+    background: color-mix(in srgb, var(--cat-color) 18%, transparent);
+  }
+}
+.swap__col--give .swap__opt.is-sel {
+  border-color: var(--cta);
+  background: rgba(244, 63, 94, 0.16);
+}
+.swap__col--get .swap__opt.is-sel {
+  border-color: var(--good);
+  background: rgba(74, 222, 128, 0.16);
 }
 .swap__arrow {
   align-self: center;
   color: var(--primary-2);
   font-size: 1.1rem;
   flex: 0 0 auto;
+}
+.swap__validate {
+  width: 100%;
+  margin-top: 0.55rem;
+  padding: 0.55rem;
+  border: none;
+  border-radius: 9px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary), var(--cta));
+  transition: opacity 0.15s, transform 0.1s;
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+  &:not(:disabled):active {
+    transform: translateY(1px);
+  }
+}
+.swap__confirm {
+  margin-top: 0.55rem;
+  padding: 0.6rem;
+  border-radius: 9px;
+  background: var(--bg2);
+  border: 1px solid var(--primary);
+}
+.swap__confirmtxt {
+  margin: 0 0 0.6rem;
+  font-size: 0.83rem;
+  line-height: 1.35;
+  strong {
+    color: var(--primary-2);
+  }
+}
+.swap__confirmbtns {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+.btn--ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
 }
 
 // ── Trades: matrix ─────────────────────────────────────────────────

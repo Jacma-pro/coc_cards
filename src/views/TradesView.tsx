@@ -3,7 +3,13 @@ import type { CategoryFilterValue } from '../App';
 import { categoryMeta } from '../lib/categories';
 import type { AppData } from '../lib/useAppData';
 import type { Account } from '../lib/types';
-import { reciprocalMatrix, reciprocalTradesFor, type PartnerTrades } from '../lib/trades';
+import {
+  quantityOf,
+  reciprocalMatrix,
+  reciprocalTradesFor,
+  type CategorySwap,
+  type PartnerTrades,
+} from '../lib/trades';
 import { ListIcon, GridIcon, TradeIcon } from '../components/icons';
 
 interface Props {
@@ -63,7 +69,7 @@ export function TradesView({ data, category, accountId, accountName }: Props) {
       </div>
 
       {sub === 'list' ? (
-        <TradeList partners={partners} />
+        <TradeList partners={partners} meId={accountId} meName={accountName} data={data} />
       ) : (
         <TradeMatrix accounts={accounts} matrix={matrix} highlightId={accountId} />
       )}
@@ -71,7 +77,17 @@ export function TradesView({ data, category, accountId, accountName }: Props) {
   );
 }
 
-function TradeList({ partners }: { partners: PartnerTrades[] }) {
+function TradeList({
+  partners,
+  meId,
+  meName,
+  data,
+}: {
+  partners: PartnerTrades[];
+  meId: string;
+  meName: string;
+  data: AppData;
+}) {
   if (partners.length === 0) {
     return (
       <div className="empty">
@@ -99,37 +115,150 @@ function TradeList({ partners }: { partners: PartnerTrades[] }) {
           </header>
 
           <div className="swaps">
-            {swaps.map((sw) => {
-              const meta = categoryMeta(sw.category);
-              return (
-                <div
-                  key={sw.category}
-                  className="swap"
-                  style={{ '--cat-color': meta.color } as React.CSSProperties}
-                >
-                  <span className="swap__cat">
-                    <span className="swap__catdot" aria-hidden />
-                    {meta.label}
-                  </span>
-                  <div className="swap__cols">
-                    <div className="swap__col swap__col--give">
-                      <span className="swap__label">Tu donnes</span>
-                      <span className="swap__cards">{sw.give.map((c) => c.name).join(', ')}</span>
-                    </div>
-                    <span className="swap__arrow" aria-hidden>
-                      ⇄
-                    </span>
-                    <div className="swap__col swap__col--get">
-                      <span className="swap__label">Tu reçois</span>
-                      <span className="swap__cards">{sw.get.map((c) => c.name).join(', ')}</span>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+            {swaps.map((sw) => (
+              <SwapCard
+                key={sw.category}
+                swap={sw}
+                partner={partner}
+                meId={meId}
+                meName={meName}
+                data={data}
+              />
+            ))}
           </div>
         </section>
       ))}
+    </div>
+  );
+}
+
+function SwapCard({
+  swap,
+  partner,
+  meId,
+  meName,
+  data,
+}: {
+  swap: CategorySwap;
+  partner: Account;
+  meId: string;
+  meName: string;
+  data: AppData;
+}) {
+  const { ownership, setQuantity } = data;
+  const meta = categoryMeta(swap.category);
+  const [giveId, setGiveId] = useState('');
+  const [getId, setGetId] = useState('');
+  const [confirming, setConfirming] = useState(false);
+
+  // Sélection effective (auto si un seul choix, sinon celle de l'utilisateur si encore valide).
+  const effGive = swap.give.some((c) => c.id === giveId)
+    ? giveId
+    : swap.give.length === 1
+      ? swap.give[0].id
+      : '';
+  const effGet = swap.get.some((c) => c.id === getId)
+    ? getId
+    : swap.get.length === 1
+      ? swap.get[0].id
+      : '';
+  const ready = Boolean(effGive && effGet);
+
+  const giveCard = swap.give.find((c) => c.id === effGive);
+  const getCard = swap.get.find((c) => c.id === effGet);
+
+  const apply = () => {
+    if (!effGive || !effGet) return;
+    // Moi : je donne effGive (-1), je reçois effGet (+1)
+    setQuantity(meId, effGive, quantityOf(ownership, meId, effGive) - 1);
+    setQuantity(meId, effGet, quantityOf(ownership, meId, effGet) + 1);
+    // Partenaire : il reçoit effGive (+1), il donne effGet (-1)
+    setQuantity(partner.id, effGive, quantityOf(ownership, partner.id, effGive) + 1);
+    setQuantity(partner.id, effGet, quantityOf(ownership, partner.id, effGet) - 1);
+    setConfirming(false);
+    setGiveId('');
+    setGetId('');
+  };
+
+  return (
+    <div className="swap" style={{ '--cat-color': meta.color } as React.CSSProperties}>
+      <span className="swap__cat">
+        <span className="swap__catdot" aria-hidden />
+        {meta.label}
+      </span>
+
+      <div className="swap__cols">
+        <div className="swap__col swap__col--give">
+          <span className="swap__label">Tu donnes</span>
+          <div className="swap__opts">
+            {swap.give.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                className={`swap__opt ${effGive === c.id ? 'is-sel' : ''}`}
+                aria-pressed={effGive === c.id}
+                onClick={() => {
+                  setGiveId(c.id);
+                  setConfirming(false);
+                }}
+              >
+                {c.name}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <span className="swap__arrow" aria-hidden>
+          ⇄
+        </span>
+
+        <div className="swap__col swap__col--get">
+          <span className="swap__label">Tu reçois</span>
+          <div className="swap__opts">
+            {swap.get.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                className={`swap__opt ${effGet === c.id ? 'is-sel' : ''}`}
+                aria-pressed={effGet === c.id}
+                onClick={() => {
+                  setGetId(c.id);
+                  setConfirming(false);
+                }}
+              >
+                {c.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {!confirming ? (
+        <button
+          type="button"
+          className="swap__validate"
+          disabled={!ready}
+          onClick={() => setConfirming(true)}
+        >
+          Valider l'échange
+        </button>
+      ) : (
+        <div className="swap__confirm" role="alertdialog" aria-label="Confirmer l'échange">
+          <p className="swap__confirmtxt">
+            <strong>{meName}</strong> donne <strong>{giveCard?.name}</strong> et reçoit{' '}
+            <strong>{getCard?.name}</strong> de <strong>{partner.name}</strong>. Les deux classeurs
+            seront mis à jour.
+          </p>
+          <div className="swap__confirmbtns">
+            <button type="button" className="btn btn--ghost" onClick={() => setConfirming(false)}>
+              Annuler
+            </button>
+            <button type="button" className="btn" onClick={apply}>
+              Confirmer
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
