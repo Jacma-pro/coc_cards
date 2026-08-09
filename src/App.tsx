@@ -1,31 +1,92 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useAppData } from './lib/useAppData';
 import type { Category } from './lib/types';
 import { CategoryFilter } from './components/CategoryFilter';
 import { AlbumView } from './views/AlbumView';
 import { TradesView } from './views/TradesView';
+import { AccountPicker } from './views/AccountPicker';
 import { AlbumIcon, TradeIcon, SpadeIcon } from './components/icons';
+import { initials, ownerColor } from './lib/owners';
 
 type Tab = 'album' | 'trades';
 export type CategoryFilterValue = Category | 'all';
 
 export default function App() {
   const data = useAppData();
+  const [accountId, setAccountId] = useState<string | null>(null);
   const [tab, setTab] = useState<Tab>('album');
   const [category, setCategory] = useState<CategoryFilterValue>('all');
+
+  const owners = useMemo(() => [...new Set(data.accounts.map((a) => a.owner))], [data.accounts]);
+  const selected = useMemo(
+    () => data.accounts.find((a) => a.id === accountId) ?? null,
+    [data.accounts, accountId],
+  );
+
+  // ── États bloquants (avant sélection de compte) ──────────────────
+  if (data.error && !data.configured) {
+    return (
+      <div className="screen screen--center">
+        <div className="banner banner--error" role="alert">
+          <p>{data.error}</p>
+        </div>
+      </div>
+    );
+  }
+  if (data.loading) {
+    return (
+      <div className="screen screen--center">
+        <div className="loading">
+          <span className="loading__spinner" aria-hidden />
+          <p className="muted">Chargement…</p>
+        </div>
+      </div>
+    );
+  }
+  if (!selected) {
+    return (
+      <div className="screen">
+        {data.error && (
+          <div className="banner banner--error" role="alert">
+            <p>{data.error}</p>
+            <button className="btn" onClick={data.reload}>
+              Réessayer
+            </button>
+          </div>
+        )}
+        <AccountPicker
+          data={data}
+          onSelect={(id) => {
+            setAccountId(id);
+            setTab('album');
+          }}
+        />
+      </div>
+    );
+  }
+
+  // ── App (compte sélectionné) ─────────────────────────────────────
+  const accColor = ownerColor(selected.owner, owners);
 
   return (
     <div className="app">
       <header className="topbar">
-        <div className="topbar__brand">
-          <span className="topbar__logo" aria-hidden>
-            <SpadeIcon size={20} />
+        <button
+          type="button"
+          className="topbar__account"
+          style={{ '--acc-color': accColor } as React.CSSProperties}
+          onClick={() => setAccountId(null)}
+          title="Changer de compte"
+        >
+          <span className="topbar__avatar">{initials(selected.name)}</span>
+          <span className="topbar__accmeta">
+            <span className="topbar__accname">{selected.name}</span>
+            <span className="topbar__accowner">{selected.owner} · changer</span>
           </span>
-          <div className="topbar__titles">
-            <h1 className="topbar__title">CLASH OF CARDS</h1>
-            <p className="topbar__sub">{tab === 'album' ? 'Mon album' : 'Échanges possibles'}</p>
-          </div>
-        </div>
+        </button>
+        <span className="topbar__logo" aria-hidden>
+          <SpadeIcon size={18} />
+        </span>
       </header>
 
       <div className="filterbar">
@@ -36,21 +97,14 @@ export default function App() {
         {data.error && (
           <div className="banner banner--error" role="alert">
             <p>{data.error}</p>
-            {data.configured && (
-              <button className="btn" onClick={data.reload}>
-                Réessayer
-              </button>
-            )}
+            <button className="btn" onClick={data.reload}>
+              Réessayer
+            </button>
           </div>
         )}
 
-        {data.loading ? (
-          <div className="loading">
-            <span className="loading__spinner" aria-hidden />
-            <p className="muted">Chargement…</p>
-          </div>
-        ) : tab === 'album' ? (
-          <AlbumView data={data} category={category} />
+        {tab === 'album' ? (
+          <AlbumView data={data} category={category} accountId={selected.id} />
         ) : (
           <TradesView data={data} category={category} />
         )}
@@ -64,7 +118,7 @@ export default function App() {
           onClick={() => setTab('album')}
         >
           <AlbumIcon size={22} />
-          <span>Album</span>
+          <span>Classeur</span>
         </button>
         <button
           role="tab"

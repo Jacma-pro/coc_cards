@@ -224,9 +224,9 @@
     },
     {
       "id": "base_ouvriers-bebe-dragon-base-des-ouvriers",
-      "name": "Bébé dragon (Base des ouvriers)",
+      "name": "Bébé dragon",
       "category": "base_ouvriers",
-      "imageUrl": "https://coc.guide/static/imgs/troop/babydragon2.png"
+      "imageUrl": "https://coc.guide/static/imgs/troop/babydragon.png"
     },
     {
       "id": "base_ouvriers-charrette-a-canon",

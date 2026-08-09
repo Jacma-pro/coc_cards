@@ -1,6 +1,6 @@
 import { categoryMeta } from '../lib/categories';
 import type { Card } from '../lib/types';
-import { PlusIcon, MinusIcon, CheckIcon } from './icons';
+import { PlusIcon, MinusIcon } from './icons';
 
 interface Props {
   card: Card;
@@ -8,10 +8,10 @@ interface Props {
   onChange: (quantity: number) => void;
 }
 
-function stateLabel(q: number): string {
-  if (q <= 0) return 'Manquante';
-  if (q === 1) return 'Obtenue';
-  return `Doublon ×${q - 1}`;
+function ariaState(q: number): string {
+  if (q <= 0) return 'non obtenue';
+  if (q === 1) return 'obtenue';
+  return `${q} exemplaires`;
 }
 
 export function CardTile({ card, quantity, onChange }: Props) {
@@ -28,8 +28,8 @@ export function CardTile({ card, quantity, onChange }: Props) {
         type="button"
         className="card__art"
         onClick={() => onChange(owned ? 0 : 1)}
-        title={owned ? 'Marquer comme manquante' : 'Marquer comme obtenue'}
-        aria-label={`${card.name} — ${stateLabel(quantity)}. ${owned ? 'Retirer' : 'Ajouter'}.`}
+        title={owned ? 'Retirer' : 'Ajouter'}
+        aria-label={`${card.name} — ${ariaState(quantity)}. ${owned ? 'Retirer' : 'Ajouter'}.`}
       >
         <span className="card__shine" aria-hidden />
         {card.imageUrl ? (
@@ -39,12 +39,6 @@ export function CardTile({ card, quantity, onChange }: Props) {
             {card.name.charAt(0)}
           </span>
         )}
-        {owned && !dup && (
-          <span className="card__check" aria-hidden>
-            <CheckIcon size={12} />
-          </span>
-        )}
-        {dup && <span className="card__badge">×{quantity - 1}</span>}
       </button>
 
       <div className="card__name" title={card.name}>
@@ -61,8 +55,8 @@ export function CardTile({ card, quantity, onChange }: Props) {
         >
           <MinusIcon size={16} />
         </button>
-        <span className={`card__state ${owned ? 'is-owned' : ''} ${dup ? 'is-dup' : ''}`}>
-          {stateLabel(quantity)}
+        <span className="card__count" aria-hidden>
+          {dup ? `×${quantity}` : ''}
         </span>
         <button
           type="button"

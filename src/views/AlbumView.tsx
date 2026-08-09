@@ -1,68 +1,33 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import type { CategoryFilterValue } from '../App';
 import { CardTile } from '../components/CardTile';
 import { CATEGORIES } from '../lib/categories';
 import type { AppData } from '../lib/useAppData';
 import { ownKey } from '../lib/types';
-import { initials, ownerColor } from '../lib/owners';
 
 interface Props {
   data: AppData;
   category: CategoryFilterValue;
+  accountId: string;
 }
 
-export function AlbumView({ data, category }: Props) {
-  const { cards, accounts, ownership, setQuantity } = data;
-  const [accountId, setAccountId] = useState<string>('');
-
-  const owners = useMemo(() => [...new Set(accounts.map((a) => a.owner))], [accounts]);
-
-  useEffect(() => {
-    if (!accountId && accounts.length > 0) setAccountId(accounts[0].id);
-  }, [accounts, accountId]);
+export function AlbumView({ data, category, accountId }: Props) {
+  const { cards, ownership, setQuantity } = data;
 
   const visibleCategories = useMemo(
     () => CATEGORIES.filter((c) => category === 'all' || c.id === category),
     [category],
   );
 
-  const totalOwned = useMemo(() => {
-    if (!accountId) return 0;
-    return cards.filter((c) => (ownership[ownKey(accountId, c.id)] ?? 0) >= 1).length;
-  }, [cards, ownership, accountId]);
+  const totalOwned = useMemo(
+    () => cards.filter((c) => (ownership[ownKey(accountId, c.id)] ?? 0) >= 1).length,
+    [cards, ownership, accountId],
+  );
 
   const pct = cards.length ? Math.round((totalOwned / cards.length) * 100) : 0;
 
-  if (accounts.length === 0) {
-    return <p className="empty">Aucun compte. Lance l'import Supabase (npm run import).</p>;
-  }
-
   return (
     <div className="album">
-      <div className="accounts" role="tablist" aria-label="Choisir un compte">
-        {accounts.map((a) => {
-          const color = ownerColor(a.owner, owners);
-          const active = a.id === accountId;
-          return (
-            <button
-              key={a.id}
-              role="tab"
-              aria-selected={active}
-              className={`accpill ${active ? 'is-active' : ''}`}
-              style={{ '--acc-color': color } as React.CSSProperties}
-              onClick={() => setAccountId(a.id)}
-              title={`${a.name} — ${a.owner} (priorité ${a.priority})`}
-            >
-              <span className="accpill__avatar">{initials(a.name)}</span>
-              <span className="accpill__meta">
-                <span className="accpill__name">{a.name}</span>
-                <span className="accpill__owner">{a.owner}</span>
-              </span>
-            </button>
-          );
-        })}
-      </div>
-
       <div className="album__progress">
         <div className="album__progresshead">
           <span className="album__pctnum">{pct}%</span>
