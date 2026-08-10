@@ -290,7 +290,7 @@
     },
     {
       "id": "super_troupes-super-ballon",
-      "name": "Super ballon",
+      "name": "Ballon à propulsion",
       "category": "super_troupes",
       "imageUrl": "https://coc.guide/static/imgs/troop/hastyballoon.png"
     },
