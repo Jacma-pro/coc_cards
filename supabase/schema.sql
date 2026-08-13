@@ -49,20 +49,42 @@ create trigger player_cards_updated_at
   before update on player_cards
   for each row execute function set_updated_at();
 
+-- ── Historique des mouvements (ajout / retrait / échange) ──────────
+-- Table append-only : chaque modif d'un classeur y laisse une trace.
+create table if not exists card_events (
+  id          uuid primary key default gen_random_uuid(),
+  account_id  text not null references accounts(id) on delete cascade,
+  card_id     text not null references cards(id)    on delete cascade,
+  delta       int  not null,          -- +1 ajout, -1 retrait
+  reason      text not null,          -- 'add' | 'remove' | 'trade'
+  trade_id    uuid,                   -- regroupe les mouvements d'un même échange
+  partner_id  text references accounts(id) on delete set null,
+  created_at  timestamptz not null default now()
+);
+
+create index if not exists card_events_account_idx on card_events(account_id, created_at desc);
+
 -- ── Row Level Security ─────────────────────────────────────────────
 -- Outil perso entre 3 personnes de confiance : pas d'auth. On autorise
 -- la lecture partout, et l'écriture uniquement sur player_cards via la clé anon.
 alter table cards        enable row level security;
 alter table accounts     enable row level security;
 alter table player_cards enable row level security;
+alter table card_events  enable row level security;
 
 -- Lecture publique (clé publishable / anon)
 drop policy if exists "read cards"        on cards;
 drop policy if exists "read accounts"     on accounts;
 drop policy if exists "read player_cards" on player_cards;
+drop policy if exists "read card_events"  on card_events;
 create policy "read cards"        on cards        for select using (true);
 create policy "read accounts"     on accounts     for select using (true);
 create policy "read player_cards" on player_cards for select using (true);
+create policy "read card_events"  on card_events  for select using (true);
+
+-- Historique : insertion seule via la clé publishable (append-only, pas d'update/delete)
+drop policy if exists "write card_events" on card_events;
+create policy "write card_events" on card_events for insert with check (true);
 
 -- Écriture des possessions par la clé publishable (pas cards/accounts : seed only)
 drop policy if exists "write player_cards"  on player_cards;
@@ -80,6 +102,10 @@ begin
   if exists (select 1 from pg_publication where pubname = 'supabase_realtime') then
     begin
       alter publication supabase_realtime add table player_cards;
+    exception when duplicate_object then null;
+    end;
+    begin
+      alter publication supabase_realtime add table card_events;
     exception when duplicate_object then null;
     end;
   end if;

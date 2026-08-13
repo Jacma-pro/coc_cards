@@ -221,12 +221,18 @@ function SwapCard({
 
   const apply = () => {
     if (!effGive || !effGet) return;
+    const tradeId =
+      typeof crypto !== 'undefined' && 'randomUUID' in crypto
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    const mine = { reason: 'trade' as const, tradeId, partnerId: partner.id };
+    const theirs = { reason: 'trade' as const, tradeId, partnerId: meId };
     // Moi : je donne effGive (-1), je reçois effGet (+1)
-    setQuantity(meId, effGive, quantityOf(ownership, meId, effGive) - 1);
-    setQuantity(meId, effGet, quantityOf(ownership, meId, effGet) + 1);
+    setQuantity(meId, effGive, quantityOf(ownership, meId, effGive) - 1, mine);
+    setQuantity(meId, effGet, quantityOf(ownership, meId, effGet) + 1, mine);
     // Partenaire : il reçoit effGive (+1), il donne effGet (-1)
-    setQuantity(partner.id, effGive, quantityOf(ownership, partner.id, effGive) + 1);
-    setQuantity(partner.id, effGet, quantityOf(ownership, partner.id, effGet) - 1);
+    setQuantity(partner.id, effGive, quantityOf(ownership, partner.id, effGive) + 1, theirs);
+    setQuantity(partner.id, effGet, quantityOf(ownership, partner.id, effGet) - 1, theirs);
     setConfirming(false);
     setGiveId('');
     setGetId('');

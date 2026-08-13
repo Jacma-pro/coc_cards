@@ -77,6 +77,16 @@ export function MinusIcon({ className, size }: IconProps) {
   );
 }
 
+export function HistoryIcon({ className, size }: IconProps) {
+  return (
+    <svg {...base(size, className)}>
+      <path d="M3 3v5h5" />
+      <path d="M3.05 13a9 9 0 1 0 2.5-6.36L3 8" />
+      <path d="M12 7v5l3 2" />
+    </svg>
+  );
+}
+
 export function CheckIcon({ className, size }: IconProps) {
   return (
     <svg {...base(size, className)}>

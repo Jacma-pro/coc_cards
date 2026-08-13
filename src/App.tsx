@@ -4,11 +4,12 @@ import type { Category } from './lib/types';
 import { CategoryFilter } from './components/CategoryFilter';
 import { AlbumView } from './views/AlbumView';
 import { TradesView } from './views/TradesView';
+import { HistoryView } from './views/HistoryView';
 import { AccountPicker } from './views/AccountPicker';
-import { AlbumIcon, TradeIcon, SpadeIcon } from './components/icons';
+import { AlbumIcon, TradeIcon, HistoryIcon, SpadeIcon } from './components/icons';
 import { initials, ownerColor } from './lib/owners';
 
-type Tab = 'album' | 'trades';
+type Tab = 'album' | 'trades' | 'history';
 export type CategoryFilterValue = Category | 'all';
 
 export default function App() {
@@ -103,10 +104,19 @@ export default function App() {
           </div>
         )}
 
-        {tab === 'album' ? (
+        {tab === 'album' && (
           <AlbumView data={data} category={category} accountId={selected.id} />
-        ) : (
+        )}
+        {tab === 'trades' && (
           <TradesView
+            data={data}
+            category={category}
+            accountId={selected.id}
+            accountName={selected.name}
+          />
+        )}
+        {tab === 'history' && (
+          <HistoryView
             data={data}
             category={category}
             accountId={selected.id}
@@ -133,6 +143,15 @@ export default function App() {
         >
           <TradeIcon size={22} />
           <span>Échanges</span>
+        </button>
+        <button
+          role="tab"
+          aria-selected={tab === 'history'}
+          className={`bottomnav__btn ${tab === 'history' ? 'is-active' : ''}`}
+          onClick={() => setTab('history')}
+        >
+          <HistoryIcon size={22} />
+          <span>Historique</span>
         </button>
       </nav>
     </div>

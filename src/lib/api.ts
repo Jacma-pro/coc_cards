@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import type { Account, Card, PlayerCard } from './types';
+import type { Account, Card, CardEvent, NewCardEvent, PlayerCard } from './types';
 import cardsSource from '../../cards.json';
 
 // Ordre canonique = ordre du fichier cards.json (source de vérité).
@@ -78,4 +78,25 @@ export async function setPlayerCard(
       { onConflict: 'account_id,card_id' },
     );
   if (error) throw error;
+}
+
+/** Enregistre un ou plusieurs mouvements dans l'historique (append-only). */
+export async function logEvents(events: NewCardEvent[]): Promise<void> {
+  if (events.length === 0) return;
+  const client = assertClient();
+  const { error } = await client.from('card_events').insert(events);
+  if (error) throw error;
+}
+
+/** Derniers mouvements d'un compte, du plus récent au plus ancien. */
+export async function fetchEvents(accountId: string, limit = 150): Promise<CardEvent[]> {
+  const client = assertClient();
+  const { data, error } = await client
+    .from('card_events')
+    .select('id, account_id, card_id, delta, reason, trade_id, partner_id, created_at')
+    .eq('account_id', accountId)
+    .order('created_at', { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return (data ?? []) as CardEvent[];
 }
