@@ -4,13 +4,14 @@ import { categoryMeta } from '../lib/categories';
 import type { AppData } from '../lib/useAppData';
 import type { Account } from '../lib/types';
 import {
+  directionalTradesFor,
   quantityOf,
   reciprocalMatrix,
   reciprocalTradesFor,
   type CategorySwap,
   type PartnerTrades,
 } from '../lib/trades';
-import { ListIcon, GridIcon, TradeIcon } from '../components/icons';
+import { ListIcon, GridIcon, TradeIcon, PlusIcon } from '../components/icons';
 
 interface Props {
   data: AppData;
@@ -19,11 +20,16 @@ interface Props {
   accountName: string;
 }
 
-type SubTab = 'list' | 'matrix';
+type SubTab = 'list' | 'give' | 'matrix';
 
 export function TradesView({ data, category, accountId, accountName }: Props) {
   const { cards, accounts, ownership } = data;
   const [sub, setSub] = useState<SubTab>('list');
+
+  const isPrincipal = useMemo(
+    () => accounts.find((a) => a.id === accountId)?.priority === 1,
+    [accounts, accountId],
+  );
 
   const filteredCards = useMemo(
     () => (category === 'all' ? cards : cards.filter((c) => c.category === category)),
@@ -35,6 +41,11 @@ export function TradesView({ data, category, accountId, accountName }: Props) {
     [filteredCards, accounts, ownership, accountId],
   );
 
+  const givePartners = useMemo(
+    () => directionalTradesFor(filteredCards, accounts, ownership, accountId),
+    [filteredCards, accounts, ownership, accountId],
+  );
+
   const matrix = useMemo(
     () => reciprocalMatrix(filteredCards, accounts, ownership),
     [filteredCards, accounts, ownership],
@@ -42,11 +53,6 @@ export function TradesView({ data, category, accountId, accountName }: Props) {
 
   return (
     <div className="trades">
-      <p className="trades__intro muted">
-        Échanges gagnant-gagnant pour <strong>{accountName}</strong> : tu donnes un doublon, tu
-        reçois une carte qui te manque (même catégorie).
-      </p>
-
       <div className="subtabs" role="tablist" aria-label="Vue des échanges">
         <button
           role="tab"
@@ -55,7 +61,16 @@ export function TradesView({ data, category, accountId, accountName }: Props) {
           onClick={() => setSub('list')}
         >
           <ListIcon size={18} />
-          Mes échanges
+          Échanges
+        </button>
+        <button
+          role="tab"
+          aria-selected={sub === 'give'}
+          className={`subtabs__btn ${sub === 'give' ? 'is-active' : ''}`}
+          onClick={() => setSub('give')}
+        >
+          <PlusIcon size={18} />
+          Compléter
         </button>
         <button
           role="tab"
@@ -64,13 +79,48 @@ export function TradesView({ data, category, accountId, accountName }: Props) {
           onClick={() => setSub('matrix')}
         >
           <GridIcon size={18} />
-          Vue d'ensemble
+          Vue
         </button>
       </div>
 
-      {sub === 'list' ? (
-        <TradeList partners={partners} meId={accountId} meName={accountName} data={data} />
-      ) : (
+      {sub === 'list' && (
+        <>
+          <p className="trades__intro muted">
+            Échanges gagnant-gagnant pour <strong>{accountName}</strong> : tu donnes un doublon, tu
+            reçois une carte qui te manque (même catégorie).
+          </p>
+          <TradeList partners={partners} meId={accountId} meName={accountName} data={data} />
+        </>
+      )}
+
+      {sub === 'give' &&
+        (isPrincipal ? (
+          <>
+            <p className="trades__intro muted">
+              Compléter <strong>{accountName}</strong> à sens unique : tu récupères une carte qui te
+              manque et tu rends en échange un doublon que l'autre compte possède déjà (il ne perd
+              rien).
+            </p>
+            <TradeList
+              partners={givePartners}
+              meId={accountId}
+              meName={accountName}
+              data={data}
+              emptyHint="Il faut qu'un autre compte ait un doublon d'une carte qui te manque, et que toi tu aies un doublon d'une carte qu'il possède déjà (même catégorie) à lui rendre."
+            />
+          </>
+        ) : (
+          <div className="empty">
+            <PlusIcon size={40} className="empty__icon" />
+            <p>Réservé aux comptes principaux pour l'instant.</p>
+            <p className="muted">
+              Sélectionne un compte principal (main) pour voir les cartes à récupérer sur tes autres
+              comptes.
+            </p>
+          </div>
+        ))}
+
+      {sub === 'matrix' && (
         <TradeMatrix accounts={accounts} matrix={matrix} highlightId={accountId} />
       )}
     </div>
@@ -82,11 +132,13 @@ function TradeList({
   meId,
   meName,
   data,
+  emptyHint,
 }: {
   partners: PartnerTrades[];
   meId: string;
   meName: string;
   data: AppData;
+  emptyHint?: string;
 }) {
   if (partners.length === 0) {
     return (
@@ -94,8 +146,8 @@ function TradeList({
         <TradeIcon size={40} className="empty__icon" />
         <p>Aucun échange possible pour l'instant.</p>
         <p className="muted">
-          Il faut qu'un autre compte ait un doublon d'une carte qui te manque, et toi un doublon
-          d'une carte qui lui manque, dans la même catégorie.
+          {emptyHint ??
+            "Il faut qu'un autre compte ait un doublon d'une carte qui te manque, et toi un doublon d'une carte qui lui manque, dans la même catégorie."}
         </p>
       </div>
     );

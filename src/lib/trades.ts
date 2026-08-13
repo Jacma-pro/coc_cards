@@ -66,6 +66,52 @@ export function reciprocalTradesFor(
 }
 
 /**
+ * Échanges À SENS UNIQUE pour enrichir un compte (typiquement une main).
+ * Du point de vue de `accountId` (le bénéficiaire) :
+ *  - je GAGNE une carte X : le partenaire en a un doublon et il me manque (qty 0) ;
+ *  - je DONNE en retour une carte Y dont j'ai un doublon ET que le partenaire
+ *    possède déjà → le partenaire ne perd aucune carte unique (échange neutre pour lui).
+ * Résultat : mon album gagne une carte, le partenaire garde tout ce qu'il avait.
+ * Même catégorie obligatoire (contrainte du jeu).
+ */
+export function directionalTradesFor(
+  cards: Card[],
+  accounts: Account[],
+  own: OwnershipMap,
+  accountId: string,
+): PartnerTrades[] {
+  const me = accountId;
+  const result: PartnerTrades[] = [];
+
+  for (const partner of accounts) {
+    if (partner.id === me) continue;
+
+    const swaps: CategorySwap[] = [];
+    for (const cat of CATEGORY_ORDER) {
+      const catCards = cards.filter((c) => c.category === cat);
+      // Cartes que je gagne : le partenaire a un doublon, il me manque.
+      const get = catCards.filter(
+        (c) => spareCount(own, partner.id, c.id) > 0 && quantityOf(own, me, c.id) === 0,
+      );
+      // Cartes que je rends : j'ai un doublon et le partenaire la possède déjà (neutre pour lui).
+      const give = catCards.filter(
+        (c) => spareCount(own, me, c.id) > 0 && quantityOf(own, partner.id, c.id) >= 1,
+      );
+      if (get.length > 0 && give.length > 0) swaps.push({ category: cat, give, get });
+    }
+
+    if (swaps.length > 0) {
+      const total = swaps.reduce((s, x) => s + Math.min(x.give.length, x.get.length), 0);
+      result.push({ partner, swaps, total });
+    }
+  }
+
+  // Par nombre de cartes gagnables (les meilleurs partenaires d'abord).
+  result.sort((a, b) => b.total - a.total || a.partner.priority - b.partner.priority);
+  return result;
+}
+
+/**
  * Matrice symétrique : nombre de trocs gagnant-gagnant possibles entre chaque paire
  * de comptes. Clé `${aId}:${bId}` (renseignée dans les deux sens).
  */
