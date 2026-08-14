@@ -86,8 +86,9 @@ export function TradesView({ data, category, accountId, accountName }: Props) {
       {sub === 'list' && (
         <>
           <p className="trades__intro muted">
-            Échanges gagnant-gagnant pour <strong>{accountName}</strong> : tu donnes un doublon, tu
-            reçois une carte qui te manque (même catégorie).
+            Échanges pour <strong>{accountName}</strong> : tu donnes un doublon, tu reçois une carte
+            qui te manque (même catégorie). Un album complet donne ses doublons contre n'importe
+            quelle carte qu'il possède déjà.
           </p>
           <TradeList partners={partners} meId={accountId} meName={accountName} data={data} />
         </>
@@ -334,7 +335,7 @@ function TradeMatrix({
   return (
     <div className="matrixwrap">
       <p className="matrix-legend muted">
-        Nombre d'échanges <strong>gagnant-gagnant</strong> possibles entre deux comptes.
+        Nombre d'<strong>échanges possibles</strong> entre deux comptes.
       </p>
       <div className="matrix-scroll">
         <table className="matrix">

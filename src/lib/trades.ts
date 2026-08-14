@@ -11,9 +11,9 @@ export function spareCount(own: OwnershipMap, accountId: string, cardId: string)
   return Math.max(0, quantityOf(own, accountId, cardId) - 1);
 }
 
-/** Une carte que je peux donner : j'en ai un doublon, l'autre ne l'a pas. */
-function canGive(own: OwnershipMap, from: string, to: string, cardId: string): boolean {
-  return spareCount(own, from, cardId) > 0 && quantityOf(own, to, cardId) === 0;
+/** Album complet : au moins un exemplaire de chaque carte considérée. */
+export function isComplete(own: OwnershipMap, cards: Card[], accountId: string): boolean {
+  return cards.every((c) => quantityOf(own, accountId, c.id) >= 1);
 }
 
 export interface CategorySwap {
@@ -30,9 +30,53 @@ export interface PartnerTrades {
 }
 
 /**
- * Échanges réciproques (gagnant-gagnant) du point de vue de `accountId`.
- * Pour chaque autre compte et chaque catégorie, on ne garde la catégorie que si
- * les DEUX côtés ont quelque chose à donner (même catégorie obligatoire).
+ * Cartes échangeables entre `me` et `partner`, catégorie par catégorie.
+ *
+ * Cas normal (aucun album complet) : troc gagnant-gagnant strict — chaque côté
+ * donne un doublon que l'autre n'a pas, donc chacun gagne une carte.
+ *
+ * Album complet : on relâche la contrainte pour lui. Un compte complet peut
+ * donner ses doublons à qui en manque et recevoir en retour n'importe quel
+ * doublon (qu'il possède déjà : neutre pour lui, l'autre y gagne).
+ *
+ * Deux albums complets → aucun troc (rien à gagner de part et d'autre).
+ * Même catégorie obligatoire (contrainte du jeu).
+ */
+function swapsBetween(
+  cards: Card[],
+  own: OwnershipMap,
+  meId: string,
+  partnerId: string,
+  meComplete: boolean,
+  partnerComplete: boolean,
+): CategorySwap[] {
+  if (meComplete && partnerComplete) return [];
+
+  const swaps: CategorySwap[] = [];
+  for (const cat of CATEGORY_ORDER) {
+    const catCards = cards.filter((c) => c.category === cat);
+    // Ce que `me` tend au partenaire : un doublon que le partenaire n'a pas
+    // (il gagne) OU n'importe quel doublon si le partenaire est complet (neutre).
+    const give = catCards.filter(
+      (c) =>
+        spareCount(own, meId, c.id) > 0 &&
+        (quantityOf(own, partnerId, c.id) === 0 || partnerComplete),
+    );
+    // Ce que le partenaire tend à `me` : idem dans l'autre sens.
+    const get = catCards.filter(
+      (c) =>
+        spareCount(own, partnerId, c.id) > 0 &&
+        (quantityOf(own, meId, c.id) === 0 || meComplete),
+    );
+    if (give.length > 0 && get.length > 0) swaps.push({ category: cat, give, get });
+  }
+  return swaps;
+}
+
+/**
+ * Échanges du point de vue de `accountId`, pour chaque autre compte.
+ * Gagnant-gagnant entre deux albums incomplets ; sens unique dès qu'un album
+ * complet est impliqué (cf. swapsBetween).
  */
 export function reciprocalTradesFor(
   cards: Card[],
@@ -41,18 +85,20 @@ export function reciprocalTradesFor(
   accountId: string,
 ): PartnerTrades[] {
   const me = accountId;
+  const meComplete = isComplete(own, cards, me);
   const result: PartnerTrades[] = [];
 
   for (const partner of accounts) {
     if (partner.id === me) continue;
 
-    const swaps: CategorySwap[] = [];
-    for (const cat of CATEGORY_ORDER) {
-      const catCards = cards.filter((c) => c.category === cat);
-      const give = catCards.filter((c) => canGive(own, me, partner.id, c.id));
-      const get = catCards.filter((c) => canGive(own, partner.id, me, c.id));
-      if (give.length > 0 && get.length > 0) swaps.push({ category: cat, give, get });
-    }
+    const swaps = swapsBetween(
+      cards,
+      own,
+      me,
+      partner.id,
+      meComplete,
+      isComplete(own, cards, partner.id),
+    );
 
     if (swaps.length > 0) {
       const total = swaps.reduce((s, x) => s + Math.min(x.give.length, x.get.length), 0);
@@ -112,8 +158,9 @@ export function directionalTradesFor(
 }
 
 /**
- * Matrice symétrique : nombre de trocs gagnant-gagnant possibles entre chaque paire
- * de comptes. Clé `${aId}:${bId}` (renseignée dans les deux sens).
+ * Matrice symétrique : nombre d'échanges possibles entre chaque paire de comptes
+ * (même logique que la liste : gagnant-gagnant, ou sens unique si un album complet
+ * est impliqué ; 0 entre deux albums complets). Clé `${aId}:${bId}`, deux sens.
  */
 export function reciprocalMatrix(
   cards: Card[],
@@ -121,17 +168,15 @@ export function reciprocalMatrix(
   own: OwnershipMap,
 ): Record<string, number> {
   const m: Record<string, number> = {};
+  const complete = new Map<string, boolean>();
+  for (const a of accounts) complete.set(a.id, isComplete(own, cards, a.id));
+
   for (let i = 0; i < accounts.length; i++) {
     for (let j = i + 1; j < accounts.length; j++) {
       const a = accounts[i];
       const b = accounts[j];
-      let total = 0;
-      for (const cat of CATEGORY_ORDER) {
-        const catCards = cards.filter((c) => c.category === cat);
-        const give = catCards.filter((c) => canGive(own, a.id, b.id, c.id)).length;
-        const get = catCards.filter((c) => canGive(own, b.id, a.id, c.id)).length;
-        total += Math.min(give, get);
-      }
+      const swaps = swapsBetween(cards, own, a.id, b.id, !!complete.get(a.id), !!complete.get(b.id));
+      const total = swaps.reduce((s, x) => s + Math.min(x.give.length, x.get.length), 0);
       if (total > 0) {
         m[`${a.id}:${b.id}`] = total;
         m[`${b.id}:${a.id}`] = total;
