@@ -328,6 +328,70 @@ h2 {
     transform: translateY(0);
   }
 }
+// Classeur complet : anneau chromatique animé autour de la carte.
+@property --coc-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+.acccard.is-complete {
+  position: relative;
+  border-color: transparent;
+  background:
+    linear-gradient(180deg, var(--bg2), var(--bg)) padding-box,
+    conic-gradient(
+        from var(--coc-angle),
+        #ff5fa2,
+        #ff8c26,
+        #ffe23f,
+        #4ade80,
+        #3b9dff,
+        #a855f7,
+        #ff5fa2
+      )
+      border-box;
+  border: 2px solid transparent;
+  animation: coc-spin 4.5s linear infinite;
+}
+.acccard__aura {
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  z-index: -1;
+  background: conic-gradient(
+    from var(--coc-angle),
+    #ff5fa2,
+    #ff8c26,
+    #ffe23f,
+    #4ade80,
+    #3b9dff,
+    #a855f7,
+    #ff5fa2
+  );
+  filter: blur(11px);
+  opacity: 0.55;
+  animation: coc-spin 4.5s linear infinite;
+  pointer-events: none;
+}
+@keyframes coc-spin {
+  to {
+    --coc-angle: 360deg;
+  }
+}
+.acccard__done {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-family: 'Russo One', sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.3px;
+  color: #0f0f23;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ffe23f, #ff8c26);
+  box-shadow: 0 0 14px rgba(255, 210, 60, 0.5);
+}
+
 .acccard__top {
   display: flex;
   align-items: center;

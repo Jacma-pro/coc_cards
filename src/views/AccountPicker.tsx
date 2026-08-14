@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import type { AppData } from '../lib/useAppData';
 import { ownKey } from '../lib/types';
 import { initials, ownerColor } from '../lib/owners';
-import { SpadeIcon } from '../components/icons';
+import { SpadeIcon, CheckIcon } from '../components/icons';
 
 interface Props {
   data: AppData;
@@ -41,17 +41,26 @@ export function AccountPicker({ data, onSelect }: Props) {
               {list.map((a) => {
                 const owned = ownedCount(a.id);
                 const pct = cards.length ? Math.round((owned / cards.length) * 100) : 0;
+                const complete = cards.length > 0 && owned === cards.length;
                 return (
                   <button
                     key={a.id}
                     type="button"
-                    className="acccard"
+                    className={`acccard ${complete ? 'is-complete' : ''}`}
                     style={{ '--acc-color': color } as React.CSSProperties}
                     onClick={() => onSelect(a.id)}
                   >
+                    {complete && <span className="acccard__aura" aria-hidden />}
                     <span className="acccard__top">
                       <span className="acccard__avatar">{initials(a.name)}</span>
-                      <span className="acccard__prio">P{a.priority}</span>
+                      {complete ? (
+                        <span className="acccard__done">
+                          <CheckIcon size={13} />
+                          Complet
+                        </span>
+                      ) : (
+                        <span className="acccard__prio">P{a.priority}</span>
+                      )}
                     </span>
                     <span className="acccard__name">{a.name}</span>
                     <span className="acccard__progress">
