@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { fetchAccounts, fetchCards, fetchPlayerCards, logEvents, setPlayerCard } from './api';
-import { isSupabaseConfigured, supabase } from './supabase';
+import { isDemo, isSupabaseConfigured, supabase } from './supabase';
 import type { Account, Card, EventReason, OwnershipMap, PlayerCard } from './types';
 import { ownKey } from './types';
 
@@ -15,6 +15,7 @@ export interface AppData {
   loading: boolean;
   error: string | null;
   configured: boolean;
+  demo: boolean;
   cards: Card[];
   accounts: Account[];
   ownership: OwnershipMap;
@@ -41,13 +42,6 @@ export function useAppData(): AppData {
   }, [ownership]);
 
   const load = useCallback(async () => {
-    if (!isSupabaseConfigured) {
-      setError(
-        "Supabase n'est pas configuré. Renseigne VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY dans un fichier .env, puis relance le serveur de dev.",
-      );
-      setLoading(false);
-      return;
-    }
     setLoading(true);
     setError(null);
     try {
@@ -143,7 +137,8 @@ export function useAppData(): AppData {
   return {
     loading,
     error,
-    configured: isSupabaseConfigured,
+    configured: isSupabaseConfigured || isDemo,
+    demo: isDemo,
     cards,
     accounts,
     ownership,

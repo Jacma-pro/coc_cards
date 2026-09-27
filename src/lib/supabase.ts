@@ -9,3 +9,6 @@ export const isSupabaseConfigured = Boolean(url && anonKey);
 export const supabase: SupabaseClient | null = isSupabaseConfigured
   ? createClient(url!, anonKey!)
   : null;
+
+/** Sans Supabase, l'app tourne en mode démo (données locales, cf. demo.ts). */
+export const isDemo = !isSupabaseConfigured;

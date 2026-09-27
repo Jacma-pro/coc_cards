@@ -15,6 +15,14 @@ Mini-site perso pour suivre les collections de cartes de l'event **Clash of Card
 
 Catégories & couleurs : `elixir` (rose), `elixir_noir` (violet), `base_ouvriers` (orange), `super_troupes` (bleu).
 
+## Mode démo
+
+Sans variables Supabase, l'app démarre en **mode démo** : 10 comptes fictifs, collections pré-remplies, modifications gardées dans le navigateur (localStorage) avec un bouton « Réinitialiser ». C'est ce mode qui tourne sur le déploiement public — il suffit de ne déclarer aucune variable d'env.
+
+```bash
+npm run dev   # sans .env → démo
+```
+
 ## Mise en route locale
 
 ### 1. Installer

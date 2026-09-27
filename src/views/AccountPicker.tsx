@@ -3,6 +3,7 @@ import type { AppData } from '../lib/useAppData';
 import { ownKey } from '../lib/types';
 import { initials, ownerColor } from '../lib/owners';
 import { SpadeIcon, CheckIcon } from '../components/icons';
+import { resetDemo } from '../lib/demo';
 
 interface Props {
   data: AppData;
@@ -25,6 +26,25 @@ export function AccountPicker({ data, onSelect }: Props) {
         <h1 className="picker__title">CLASH OF CARDS</h1>
         <p className="picker__tagline">Choisis un compte pour ouvrir son classeur</p>
       </div>
+
+      {data.demo && (
+        <div className="banner banner--demo">
+          <p>
+            <strong>Démo</strong> · comptes fictifs, modifications gardées dans ce navigateur
+            uniquement.
+          </p>
+          <button
+            type="button"
+            className="btn btn--ghost"
+            onClick={() => {
+              resetDemo();
+              data.reload();
+            }}
+          >
+            Réinitialiser
+          </button>
+        </div>
+      )}
 
       {owners.map((owner) => {
         const color = ownerColor(owner, owners);

@@ -1,4 +1,5 @@
-import { supabase } from './supabase';
+import { isDemo, supabase } from './supabase';
+import * as demo from './demo';
 import type { Account, Card, CardEvent, NewCardEvent, PlayerCard } from './types';
 import cardsSource from '../../cards.json';
 
@@ -20,6 +21,7 @@ function assertClient() {
 }
 
 export async function fetchCards(): Promise<Card[]> {
+  if (isDemo) return demo.fetchCards();
   const client = assertClient();
   const { data, error } = await client
     .from('cards')
@@ -36,6 +38,7 @@ export async function fetchCards(): Promise<Card[]> {
 }
 
 export async function fetchAccounts(): Promise<Account[]> {
+  if (isDemo) return demo.fetchAccounts();
   const client = assertClient();
   const { data, error } = await client
     .from('accounts')
@@ -47,6 +50,7 @@ export async function fetchAccounts(): Promise<Account[]> {
 }
 
 export async function fetchPlayerCards(): Promise<PlayerCard[]> {
+  if (isDemo) return demo.fetchPlayerCards();
   const client = assertClient();
   const { data, error } = await client
     .from('player_cards')
@@ -61,6 +65,7 @@ export async function setPlayerCard(
   cardId: string,
   quantity: number,
 ): Promise<void> {
+  if (isDemo) return demo.setPlayerCard(accountId, cardId, quantity);
   const client = assertClient();
   if (quantity <= 0) {
     const { error } = await client
@@ -82,6 +87,7 @@ export async function setPlayerCard(
 
 /** Enregistre un ou plusieurs mouvements dans l'historique (append-only). */
 export async function logEvents(events: NewCardEvent[]): Promise<void> {
+  if (isDemo) return demo.logEvents(events);
   if (events.length === 0) return;
   const client = assertClient();
   const { error } = await client.from('card_events').insert(events);
@@ -90,6 +96,7 @@ export async function logEvents(events: NewCardEvent[]): Promise<void> {
 
 /** Derniers mouvements d'un compte, du plus récent au plus ancien. */
 export async function fetchEvents(accountId: string, limit = 150): Promise<CardEvent[]> {
+  if (isDemo) return demo.fetchEvents(accountId, limit);
   const client = assertClient();
   const { data, error } = await client
     .from('card_events')
